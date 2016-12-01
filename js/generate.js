@@ -40,7 +40,7 @@ function Node(x, y, radius) {
     this.p = new Vector(this.curXY.x, this.curXY.y)
     this.radius = radius;
     this.active = true;
-    this.color = Math.random()*360;
+    this.color = colors[randomInt(0, colors.length)];
     //this.color = "rgba(0,0,0,1)";
     this.angle = Math.random();
     this.k = randomInt(5,8);
@@ -57,7 +57,7 @@ Node.prototype.update = function (delta) {
 }
 
 Node.prototype.draw = function (c) {
-    c.fillStyle = 'hsla('+this.color+',95%, 50%,1)';
+    c.fillStyle = this.color;
     //c.fillStyle = this.color;
     c.beginPath();
     c.arc(this.p.x, this.p.y, this.radius, 0, Math.PI * 2, true);
@@ -72,6 +72,9 @@ function randomInt( min, max ) {
 }
 function distance(ax, ay, bx, by) {
     return Math.sqrt(Math.pow( ax - bx, 2) + Math.pow( ay - by, 2));
+}
+function distanceX(ax, bx) {
+    return Math.abs(ax - bx);
 }
 function randXY() {
     //switch(randomInt( 1, 4 )) {
@@ -108,7 +111,7 @@ function move(begin, end, speed) {
 // Configs
 
 var BG_COLOR      = 'rgba(255, 255, 255, 1)',
-    RELATION_COLOR      = 'rgba(89,80,255, 0.2)',
+    RELATION_COLOR      = 'rgba(89,80,255, 0.3)',
     PARTICLE_RADIUS       = 1,
     G_POINT_RADIUS        = 10,
     G_POINT_RADIUS_LIMITS = 65,
@@ -132,6 +135,7 @@ var charts = {
     "Ж": [[3,1, 3,5], [1,5, 2,3], [1,1, 2,3], [2,3, 4,3], [4,3, 5,1], [4,3, 5,5]],
     "З": [[1,1, 4,1], [4,1, 5,2], [5,2, 4,3], [4,3, 2,3], [4,3, 5,4], [5,4, 4,5], [4,5, 1,5]],
     "И": [[1,1, 1,5], [1,5, 5,1], [5,1, 5,5]],
+    "Й": [[3,1, 4,1], [1,2, 1,6], [1,6, 6,2], [6,2, 6,6]],
     "К": [[1,1, 1,5], [1,3, 3,3], [3,3, 5,1], [3,3, 5,5]],
     "Л": [[1,5, 2,3], [2,3, 4,1], [4,1, 5,1], [5,1, 5,5]],
     "М": [[1,5, 1,1], [1,1, 3,3], [3,3, 5,1], [5,1, 5,5]],
@@ -152,7 +156,7 @@ var charts = {
     "Ы": [[1,1, 1,5], [1,5, 4,5], [4,5, 4,3], [4,3, 1,3], [6,1, 6,5]],
     "Ь": [[1,1, 1,5], [1,5, 4,5], [4,5, 4,3], [4,3, 1,3]],
     "Э": [[1,1, 3,1], [3,1, 4,2], [4,2, 4,4], [4,4, 3,5], [3,5, 1,5], [4,3, 1,3]],
-    "Ю": [[1,1, 1,5], [1,3, 3,3], [3,2, 3,4], [3,4, 4,5], [4,5, 5,4], [5,4, 5,2], [5,2, 4,1], [4,1, 3,2]],
+    "Ю": [[1,1, 1,5], [1,3, 3,3], [3,1, 3,5], [5,1, 5,5], [3,5, 5,5], [3,1, 5,1]],
     "Я": [[1,2, 2,1], [2,1, 5,1], [5,1, 5,5], [5,3, 2,3], [2,3, 1,2], [3,3, 1,5]],
     " ": [],
     "!": [[3,1, 3,5], [4,1, 4,5], [3,7, 4,7]],
@@ -170,13 +174,13 @@ var canvas, ctx,
     objects = [],
     text = [
         {word: "ПРИВЕТ", time: 1500 },
-        {word: "!!!", time: 1500 },
-        {word: "ПАУ", time: 1500 },
-        {word: "ТУКТУК", time: 1500 },
+        {word: "ВАМ НУЖЕН", time: 1500 },
+        {word: "САЙТ", time: 1500 },
     ],
     mouse = new Vector(),
     isDown = false,
-    currentText = 0, currentNode = 0, timer;
+    currentText = 0, currentNode = 0, timer,
+    colors = ["#351330", "#424254", "#64908A", "#E8CAA4", "#CC2A41"];
 
 // Event Listeners
 
@@ -210,7 +214,7 @@ function drawRelation() {
         if(!isDown && node1.active) {
             var dist = distance(mouse.x, mouse.y, node1.p.x, node1.p.y);
             if(dist < minDist * 2) {
-                node1.radius = (minDist * 2 - dist)/8;
+                node1.radius = (minDist * 2 - dist) / 4;
             } else {
                 node1.radius = PARTICLE_RADIUS;
             }
@@ -319,7 +323,7 @@ function nextText() {
     lineWidth = fontSize / 6;
     minDist = lineWidth;
     cellWidth = fontSize / CHART_LENGTH;
-
+    MAX_POINT_LINE = fontSize/3.5;
     currentNode = 0;
     for(k = 0; k < txt.word.length; k++) {
         var chart = charts[txt.word[k]];
