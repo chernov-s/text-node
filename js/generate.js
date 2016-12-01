@@ -74,12 +74,13 @@ function distance(ax, ay, bx, by) {
     return Math.sqrt(Math.pow( ax - bx, 2) + Math.pow( ay - by, 2));
 }
 function randXY() {
-    switch(randomInt( 1, 4 )) {
-        case 1: return {x: randomInt(-10, width + 10), y: -10}; // Top
-        case 2: return {x: width + 10, y: randomInt(-10, height + 10)}; // Right
-        case 3: return {x: randomInt(-10, width + 10), y: height + 10}; // Bottom
-        case 4: return {x: -10, y: randomInt(-10, height + 10)}; // Left
-    }
+    //switch(randomInt( 1, 4 )) {
+    //    case 1: return {x: randomInt(-10, width + 10), y: -10}; // Top
+    //    case 2: return {x: width + 10, y: randomInt(-10, height + 10)}; // Right
+    //    case 3: return {x: randomInt(-10, width + 10), y: height + 10}; // Bottom
+    //    case 4: return {x: -10, y: randomInt(-10, height + 10)}; // Left
+    //}
+    return {x: randomInt(-10, width + 10), y: randomInt(-10, height + 10) }
 }
 /*
  * Движения объекта из одной точки в другую в 2D пространстве.
@@ -111,7 +112,7 @@ var BG_COLOR      = 'rgba(255, 255, 255, 1)',
     PARTICLE_RADIUS       = 1,
     G_POINT_RADIUS        = 10,
     G_POINT_RADIUS_LIMITS = 65,
-    MAX_POINT_LINE = 50,
+    MAX_POINT_LINE = 40,
     CHART_LENGTH = 5;
 
 var charts = {
@@ -173,10 +174,9 @@ var canvas, ctx,
         {word: "ПАУ", time: 1500 },
         {word: "ТУКТУК", time: 1500 },
     ],
-    currentChart = 0,
     mouse = new Vector(),
     isDown = false,
-    currentText = 0, currentNode = 0, timer, removeOld = false;
+    currentText = 0, currentNode = 0, timer;
 
 // Event Listeners
 
@@ -205,7 +205,7 @@ function drawRelation() {
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.strokeStyle = RELATION_COLOR;
-    for(i = 0; i < len - 1; i++) {
+    for(i = 0; i < currentNode - 1; i++) {
         node1 = objects[i];
         if(!isDown && node1.active) {
             var dist = distance(mouse.x, mouse.y, node1.p.x, node1.p.y);
@@ -221,7 +221,7 @@ function drawRelation() {
                 node1.anim1 = true;
             }
         }
-        for(k = i + 1; k < len; k++) {
+        for(k = i + 1; k < currentNode; k++) {
             node2 = objects[k];
             joinNodes(node1.p, node2.p)
         }
@@ -268,7 +268,7 @@ function addObj(n) {
 /*
  * Добавление случайных точек близ заданной прямой учитывая угол
  *
- * @param {array} 0 - x1, 1 - y1, 3 - x2, 4 - y2
+ * @param {array} m 0 - x1, 1 - y1, 3 - x2, 4 - y2
  */
 function addPointInChart(m, offsetX, offsetY) {
     var i, p,
@@ -312,7 +312,7 @@ function init() {
 }
 
 function nextText() {
-    var i, k, j;
+    var k, j;
     var txt = text[currentText];
     fontSize = width / (txt.word.length + 2);
 
@@ -320,7 +320,6 @@ function nextText() {
     minDist = lineWidth;
     cellWidth = fontSize / CHART_LENGTH;
 
-    removeOld = false;
     currentNode = 0;
     for(k = 0; k < txt.word.length; k++) {
         var chart = charts[txt.word[k]];
@@ -328,10 +327,6 @@ function nextText() {
         for(j = 0; j < chart.length; j++) {
             addPointInChart(chart[j], offset.x, offset.y);
         }
-    }
-    for(i = currentNode; i < objects.length; i++) {
-        objects[i].active = false;
-        objects[i].p = randXY();
     }
     timer = Date.now() + txt.time;
     currentText ++;
@@ -351,17 +346,14 @@ var loop = function() {
     drawRelation();
 
     if(timer + 1000 < now) {
-        if(currentText < text.length)
-            nextText();
-        else
-            currentText = 0;
+        currentText = currentText % text.length;
+        nextText();
+
     }
 
-    for (i = 0; i < objects.length; i++) {
-        if(objects[i].active) {
-            objects[i].update(delta);
-            objects[i].draw(ctx);
-        }
+    for (i = 0; i < currentNode; i++) {
+        objects[i].update(delta);
+        objects[i].draw(ctx);
     }
     requestAnimationFrame(loop);
 }
