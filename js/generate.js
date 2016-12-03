@@ -104,18 +104,18 @@ function move(begin, end, speed) {
 
     return (distx < 0 ? -distx : distx) + (disty < 0 ? -disty : disty) < 1;
 };
-
+/////////////////////////////////////////////////////
 // Initialize
-//---------------------------------------------------
+/////////////////////////////////////////////////////
 
 // Configs
 
-var BG_COLOR      = 'rgba(255, 255, 255, 1)',
+var BG_COLOR      = 'rgba(255, 250, 250, 1)',
     RELATION_COLOR      = 'rgba(89,80,255, 0.3)',
     PARTICLE_RADIUS       = 1,
     G_POINT_RADIUS        = 10,
     G_POINT_RADIUS_LIMITS = 65,
-    MAX_POINT_LINE = 40,
+    MAX_POINT_LINE = 10,
     CHART_LENGTH = 5;
 
 var charts = {
@@ -173,9 +173,9 @@ var canvas, ctx,
     delta, last,
     objects = [],
     text = [
-        {word: "ПРИВЕТ", time: 1500 },
-        {word: "ВАМ НУЖЕН", time: 1500 },
-        {word: "САЙТ", time: 1500 },
+        {word: "ПРИВЕТ", time: 3500 },
+        {word: "САЙТ НУЖЕН", time: 1500 },
+        {word: "ПОНЯТНО", time: 1500 },
     ],
     mouse = new Vector(),
     isDown = false,
