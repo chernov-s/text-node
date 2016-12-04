@@ -48,11 +48,8 @@ function Node(x, y, radius) {
 
 Node.prototype.update = function (delta) {
     var speed = distance(this.p.x, this.p.y, this.target.x, this.target.y) / 10;
-    if(speed < 1) {
-        speed = randomInt(1,2) > 1 ? -0.2: 0.2;
-    }
     if(move(this.p, this.target, speed)) {
-        //this.radius = .5;
+        this.p.set(this.target.x, this.target.y);
     }
 }
 
@@ -102,7 +99,7 @@ function move(begin, end, speed) {
     begin.x += speed * Math.cos(angle);
     begin.y += speed * Math.sin(angle);
 
-    return (distx < 0 ? -distx : distx) + (disty < 0 ? -disty : disty) < 1;
+    return distance(begin.x, begin.y, end.x, end.y) < speed;
 };
 /////////////////////////////////////////////////////
 // Initialize
