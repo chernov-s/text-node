@@ -204,12 +204,17 @@ window.requestAnimationFrame = (function(){
 
     // Functions
 
+    /*
+     * Рисуем линии между объектами, если они достаточно близко
+     * !!!Плохое решение: Чтобы не пробегаться по всем объектам ещё раз, решил сюда добавить событие мыши
+     * при наведение на объекты
+     */
     function drawRelation() {
         var i, k, len = objects.length, node1, node2;
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.strokeStyle = RELATION_COLOR;
-        for(i = 0; i < currentNode - 1; i++) {
+        for(i = 0; i < currentNode; i++) {
             node1 = objects[i];
             if(!isDown && node1.active) {
                 var dist = distance(mouse.x, mouse.y, node1.p.x, node1.p.y);
@@ -233,7 +238,9 @@ window.requestAnimationFrame = (function(){
         ctx.stroke();
         ctx.closePath();
     }
-
+    /*
+     * рисуем линию между объектами.
+     */
     function joinNodes(a, b) {
         var dist = distance(a.x, a.y, b.x, b.y);
         if (dist < minDist) {
@@ -272,7 +279,9 @@ window.requestAnimationFrame = (function(){
     /*
      * Добавление случайных точек близ заданной прямой учитывая угол
      *
-     * @param {array} m 0 - x1, 1 - y1, 3 - x2, 4 - y2
+     * @param {array} m[0 - x1, 1 - y1, 3 - x2, 4 - y2] - координаты начала и конца прямой
+     * @param {number} offsetX - отступ с лева
+     * @param {number} offsetY - отступ с сверху
      */
     function addPointInChart(m, offsetX, offsetY) {
         var i, p,
@@ -315,6 +324,10 @@ window.requestAnimationFrame = (function(){
         loop();
     }
 
+    /*
+     * Генерируем следующее слова из массита text
+     * !!!Тут надо немножко пофиксить, так как размер шрифта не всегда норм получается
+     */
     function nextText() {
         var k, j;
         var txt = text[currentText];
