@@ -235,7 +235,7 @@ window.requestAnimationFrame = (function(){
             if(!isDown && node1.active) {
                 var dist = distance(mouse.x, mouse.y, node1.p.x, node1.p.y);
                 if(dist < minDist * 2) {
-                    node1.radius = (PARTICLE_RADIUS + minDist * 2 - dist)/2;
+                    node1.radius = Math.min((minDist * 2 * PARTICLE_RADIUS / dist), minDist);
                 } else {
                     node1.radius = PARTICLE_RADIUS;
                 }
